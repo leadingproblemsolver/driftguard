@@ -1,0 +1,33 @@
+repo:
+  name: driftguard
+  account: leadingproblemsolver
+  visibility: public
+  classification: advanced
+  status: active
+  canonical: false                # unresolved — see notes
+  canonical_ref: "Advant0-st4r/driftguard (newer push, 2026-07-09 vs 2026-07-06)"
+  fork_of: null
+
+description:
+  one_liner: "Constraint-control layer: define what must stay true, check the next action, get Pass/Watch/Block."
+  problem: "AI-assisted work drifts from stated intent with no deterministic checkpoint before the drift compounds."
+  proof: "Real README confirmed on both account copies — NOT a placeholder repo. Two copies diverge by 248 lines; not yet diffed line-by-line."
+
+signals:
+  primary: "deterministic-enforcement + AI-semantic-interpretation split — directly mirrors the CCSN layer architecture (zero-AI instrumentation / AI legibility)"
+  secondary: ["guardrail inference design", "Pass/Watch/Block verdict model"]
+  audience: investor
+
+evidence:
+  level: 1
+  verified: ["README describes a real, specific mechanism on both copies", "four-field default setup (purpose/workflow/target/observable proof) documented"]
+  unverified: ["which copy is current", "any real usage instance", "content of the 248-line divergence"]
+  missing: ["line-by-line diff between leadingproblemsolver and Advant0-st4r copies", "canonical designation", "one real usage run"]
+
+links:
+  live_demo: null
+  ci_badge: null
+  license: "UNLICENSED"
+
+topics: ["guardrails", "constraint-checking", "ai-governance", "deterministic-verification"]
+last_synced: "2026-07-17"

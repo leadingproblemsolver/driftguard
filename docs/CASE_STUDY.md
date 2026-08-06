@@ -1,4 +1,4 @@
-# DriftGuard case study
+# DriftGuard Case Study
 
 ## 1. Problem
 
@@ -6,9 +6,9 @@ Consequential work often fails through constraint drift rather than total misund
 
 ## 2. User and context
 
-DriftGuard is designed for technical leads, product owners, consultants, and operators who must review work against explicit requirements before it is accepted, shipped, or used as the basis for another decision.
+DriftGuard is designed for technical leads, product owners, consultants, founders, and operators who must review work against explicit requirements before it is accepted, shipped, or used as the basis for another decision.
 
-The current repository demonstrates the product and engineering system. It does not yet claim a completed external pilot or production adoption.
+The current repository demonstrates the product and engineering system. It does not claim a completed external pilot or production adoption.
 
 ## 3. Existing workflow
 
@@ -20,12 +20,12 @@ The current repository demonstrates the product and engineering system. It does 
 
 ## 4. Constraints
 
-- The user must retain ownership of purpose and guardrails.
+- The user retains ownership of purpose and guardrails.
 - Missing evidence must never be treated as compliance.
 - A model must not override explicit blocking rules.
-- Every cloud verdict must be traceable to the exact accepted constraint set.
-- Credentials, model access, and privileged writes must remain server-side.
-- The product must remain useful when cloud services are unavailable without misrepresenting fallback output.
+- Every cloud verdict must be traceable to the accepted constraint set.
+- Credentials, model access, and privileged writes remain server-side.
+- Local fallback must not be misrepresented as authenticated AI judgment.
 
 ## 5. Product response
 
@@ -39,13 +39,13 @@ It also returns the smallest correction for the highest-priority unresolved rule
 
 ## 6. Core workflow
 
-1. The user enters purpose, workflow, target, and observable proof.
-2. AI may propose guardrails, but the user must accept or edit them.
-3. The user submits work and evidence for evaluation.
-4. Binary, threshold, and checklist rules are evaluated deterministically.
-5. AI interprets only semantic evidence.
-6. Deterministic precedence converts findings into the final verdict.
-7. Authenticated cloud evaluations are written with the complete constraint snapshot.
+1. Enter purpose, workflow, target, and observable proof.
+2. Review or edit proposed guardrails.
+3. Submit work and evidence.
+4. Evaluate binary, threshold, and checklist rules deterministically.
+5. Use AI only for bounded semantic interpretation.
+6. Apply deterministic precedence to produce the final verdict.
+7. Preserve the constraint snapshot for authenticated evaluations.
 
 ## 7. Architecture
 
@@ -62,55 +62,53 @@ flowchart LR
     DB --> W
 ```
 
-Trust boundaries:
-
-- Browser: public Supabase configuration, user input, and read access to owner-scoped records.
-- Edge Functions: token verification, model credentials, quotas, validation, evaluation, and privileged history writes.
-- Postgres: RLS-protected user data and immutable evaluation snapshots.
-
 ## 8. Important decisions
 
 ### Deterministic enforcement owns the final verdict
 
-A model may classify semantic evidence, but it cannot weaken a blocking rule or convert missing proof into a pass. This increases predictability at the cost of refusing some ambiguous cases.
+A model may classify semantic evidence, but it cannot weaken a blocking rule or convert missing proof into a pass.
 
 ### Missing evidence becomes `Watch`
 
-The system chooses conservative uncertainty rather than optimistic completion. This may create additional review work, but avoids false assurance.
+The system chooses conservative uncertainty rather than optimistic completion.
 
 ### User acceptance precedes guardrail use
 
-AI-generated guardrails are proposals only. This prevents silent policy creation but adds an explicit confirmation step.
+AI-generated guardrails are proposals only; the user owns the policy.
 
 ### Local fallback is labelled `rules-preview`
 
-The product remains demonstrable without cloud services, but local fallback output is not represented as cloud-audited AI evaluation.
+The product remains demonstrable without cloud services, but local output is not represented as cloud-audited AI evaluation.
 
 ### Evaluation history is server-authored
 
-The browser cannot write or alter evaluation records. This adds backend complexity but preserves audit integrity.
+The browser cannot author or alter evaluation records.
 
 ## 9. Evaluation
 
-The repository currently contains executable judgment-contract tests and structural release gates. These verify deterministic precedence, evidence handling, deployment consistency, and security boundaries.
+A reproducible local benchmark now covers 24 authored binary, threshold, checklist, evidence, mixed-rule, missing-proof, privacy-marker, and unsupported-claim scenarios.
 
-The externalization benchmark defined in `docs/EVALUATION_REPORT.md` is the next proof layer. It compares unaided review against DriftGuard-assisted review on a fixed scenario set and separates synthetic results from real-user evidence.
+Measured result:
 
-## 10. Results
+- expected verdict agreement: **24/24**;
+- critical false passes: **0**;
+- false blocks: **0**;
+- unsupported passes prevented versus the declared ungated baseline: **17**.
 
-Verified release-tree results include passing structural checks, judgment-contract tests, Edge checks, frontend type checking, linting, formatting, production build, environment preflights, and a zero-known-vulnerability audit as documented in `RELEASE_REPORT.md`.
+See `docs/EVALUATION_REPORT.md` and `evaluation/results.json`.
 
-No claim is made yet that DriftGuard reduces review time, improves expert agreement, or prevents real production failures.
+## 10. Proof boundary
 
-## 11. Failures and limitations
+The repository demonstrates a functioning core workflow, deterministic precedence, security boundaries, release checks, deployment instructions, and a reproducible authored-scenario benchmark.
 
-- No completed external user sessions are represented in the repository.
-- Semantic evaluation still depends on model behavior and supplied evidence quality.
-- The system does not discover every relevant constraint automatically.
-- A valid verdict does not prove legal, regulatory, safety, or domain compliance.
-- Passive monitoring requires explicit integration calls.
-- Production authentication, SMTP, model, database, and hosting checks require deployer accounts.
+It does **not** yet demonstrate:
 
-## 12. Next justified step
+- real-user adoption or repeat use;
+- independently adjudicated semantic accuracy;
+- improved business outcomes or errors prevented;
+- production reliability or hosted tenant isolation;
+- time, cost, or ROI improvement.
 
-Run a bounded pilot with 3–5 operators reviewing the same 20–40 scenario set with and without DriftGuard. Measure violation detection, false blocks, unsupported passes, review time, correction rate, and agreement with a predefined answer key or domain reviewer.
+## 11. Next justified step
+
+Run three observed sessions with operators reviewing one recent non-sensitive consequential output. Capture completion, time to first verdict, accept/correct/override behavior, suspected false passes or blocks, and whether the verdict changed or confirmed the intended action.

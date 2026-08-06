@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { evaluateLocally } from "../src/lib/drift-engine.ts";
+import cases from "../evaluation/cases.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const cases = JSON.parse(fs.readFileSync(path.join(root, "evaluation/cases.json"), "utf8"));
 
 function workspace(guardrails) {
   return {
@@ -22,9 +22,8 @@ function workspace(guardrails) {
   };
 }
 
-// A deliberately weak, transparent proxy for an unstructured review: once work is
-// submitted, it is treated as acceptable because no explicit rule precedence exists.
-// This is not an LLM comparison and is not presented as one.
+// Transparent proxy for an unstructured review with no explicit constraint gate.
+// This is not an LLM or expert-review comparison.
 function ungatedReviewBaseline() {
   return "pass";
 }

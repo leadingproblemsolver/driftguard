@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-06T11:44:51.589Z",
+    "evidenceType": "locally measured deterministic benchmark",
+    "sampleSize": 24,
+    "driftguardAgreement": 24,
+    "baselineAgreement": 7,
+    "criticalFalsePasses": 0,
+    "falseBlocks": 0,
+    "unsupportedPassesPrevented": 17,
+    "limitations": [
+      "Fixtures are authored scenarios, not observed user tasks.",
+      "The baseline is an ungated deterministic proxy, not a model or expert-review comparison.",
+      "Semantic preview is intentionally conservative and cannot earn Pass.",
+      "The benchmark does not establish adoption, ROI, latency, scale, or production reliability."
+    ]
+  },
+  "note": "Run npm run evaluate:externalization to regenerate this file with per-case rows."
+}

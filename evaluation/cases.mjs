@@ -1,0 +1,41 @@
+const rule = (id, metricType, enforcement = "block", metricConfig) => ({
+  id,
+  title: id,
+  description: id,
+  criticality: enforcement === "block" ? "critical" : "important",
+  enforcement,
+  targetScope: "output",
+  metricType,
+  ...(metricConfig ? { metricConfig } : {}),
+  active: true,
+  source: "template",
+});
+const structured = (metrics = {}, binary = {}, checklist = {}) => ({ metrics, binary, checklist });
+const one = (id, name, expected, r, evidence) => ({ id, name, expected, rule: r, ...evidence });
+
+export default [
+  one("BIN-01", "blocking binary satisfied", "pass", rule("r1", "binary"), { structured: structured({}, { r1: true }) }),
+  one("BIN-02", "blocking binary failed", "block", rule("r1", "binary"), { structured: structured({}, { r1: false }) }),
+  one("BIN-03", "blocking binary missing", "watch", rule("r1", "binary"), { structured: structured() }),
+  one("BIN-04", "warning binary failed", "watch", rule("r1", "binary", "warn"), { structured: structured({}, { r1: false }) }),
+  one("THR-01", "gte threshold met", "pass", rule("r1", "threshold", "block", { operator: "gte", threshold: 80 }), { structured: structured({ r1: 85 }) }),
+  one("THR-02", "gte threshold failed", "block", rule("r1", "threshold", "block", { operator: "gte", threshold: 80 }), { structured: structured({ r1: 70 }) }),
+  one("THR-03", "lte threshold met", "pass", rule("r1", "threshold", "block", { operator: "lte", threshold: 300 }), { structured: structured({ r1: 220 }) }),
+  one("THR-04", "lte threshold failed", "block", rule("r1", "threshold", "block", { operator: "lte", threshold: 300 }), { structured: structured({ r1: 450 }) }),
+  one("THR-05", "equal threshold met", "pass", rule("r1", "threshold", "block", { operator: "eq", threshold: 3 }), { structured: structured({ r1: 3 }) }),
+  one("THR-06", "threshold missing", "watch", rule("r1", "threshold", "block", { operator: "gte", threshold: 80 }), { structured: structured() }),
+  one("CHK-01", "checklist complete", "pass", rule("r1", "checklist", "block", { checklist: ["tests", "security", "rollback"] }), { structured: structured({}, {}, { r1: { tests: true, security: true, rollback: true } }) }),
+  one("CHK-02", "checklist failed", "block", rule("r1", "checklist", "block", { checklist: ["tests", "security", "rollback"] }), { structured: structured({}, {}, { r1: { tests: true, security: false, rollback: true } }) }),
+  one("CHK-03", "checklist incomplete", "watch", rule("r1", "checklist", "block", { checklist: ["tests", "security", "rollback"] }), { structured: structured({}, {}, { r1: { tests: true } }) }),
+  one("CHK-04", "warning checklist failed", "watch", rule("r1", "checklist", "warn", { checklist: ["clear", "concise"] }), { structured: structured({}, {}, { r1: { clear: true, concise: false } }) }),
+  one("SEM-01", "unsupported metric blocked", "block", { ...rule("r1", "evidence"), title: "Verified evidence", description: "Every metric needs proof" }, { text: "This improves conversion by 42%." }),
+  one("SEM-02", "unsupported metric warned", "watch", { ...rule("r1", "evidence", "warn"), title: "Verified evidence", description: "Every metric needs proof" }, { text: "This improves conversion by 42%." }),
+  one("SEM-03", "qualified metric remains uncertain", "watch", { ...rule("r1", "evidence"), title: "Verified evidence", description: "Every metric needs proof" }, { text: "Measured improvement was 42%.", evidence: "source: local benchmark" }),
+  one("SEM-04", "private data blocked", "block", { ...rule("r1", "evidence"), title: "No confidential customer data", description: "Private customer data must not be included" }, { text: "Contact email: person@example.com" }),
+  one("SEM-05", "clean semantic evidence remains uncertain", "watch", { ...rule("r1", "evidence", "warn"), title: "Reader value", description: "Value must be clear" }, { text: "The operator sees the failed constraint and correction." }),
+  { id: "MIX-01", name: "all objective constraints pass", expected: "pass", rules: [rule("r1", "binary"), rule("r2", "threshold", "warn", { operator: "gte", threshold: 80 })], structured: structured({ r2: 90 }, { r1: true }) },
+  { id: "MIX-02", name: "one warning failure yields watch", expected: "watch", rules: [rule("r1", "binary"), rule("r2", "threshold", "warn", { operator: "gte", threshold: 80 })], structured: structured({ r2: 60 }, { r1: true }) },
+  { id: "MIX-03", name: "blocking failure overrides met rules", expected: "block", rules: [rule("r1", "binary"), rule("r2", "threshold", "warn", { operator: "gte", threshold: 80 })], structured: structured({ r2: 95 }, { r1: false }) },
+  { id: "MIX-04", name: "inactive failed rule ignored", expected: "pass", rules: [{ ...rule("r1", "binary"), active: false }, rule("r2", "threshold", "block", { operator: "gte", threshold: 80 })], structured: structured({ r2: 90 }, { r1: false }) },
+  { id: "MIX-05", name: "semantic uncertainty prevents pass", expected: "watch", rules: [rule("r1", "binary"), { ...rule("r2", "evidence", "warn"), title: "Reader value", description: "Value must be clear" }], structured: structured({}, { r1: true }), text: "Clear benefit is stated." },
+];

@@ -1,148 +1,63 @@
-# DriftGuard evaluation report
+# DriftGuard Evaluation Report
 
-## Evaluation status
-
-**Protocol complete; external benchmark not yet executed.**
-
-This document defines a reproducible evaluation without converting planned metrics into achieved results. Existing executable tests validate the judgment contract and release structure. The benchmark below is intended to test the product's user-facing claim.
+**Evaluation date:** 2026-08-06  
+**Evidence type:** locally measured deterministic benchmark  
+**Scope:** `src/lib/drift-engine.ts`
 
 ## Evaluation question
 
-Compared with unaided review, does DriftGuard help reviewers identify explicit constraint violations and missing evidence without increasing unsupported passes or excessive false blocks?
+Does the local rules engine preserve the declared `Pass / Watch / Block` precedence across objective-rule and conservative semantic-preview scenarios, and does it prevent unsupported approval compared with a deliberately ungated review baseline?
 
-## Baseline
+## Method
 
-A reviewer receives the same project brief, guardrails, candidate output, and evidence bundle in a plain document. They record:
+The benchmark contains 24 authored fixtures covering binary, threshold, checklist, evidence, mixed-rule, inactive-rule, missing-proof, privacy-marker, and unsupported-claim cases. Each fixture has an expected verdict. The runner executes `evaluateLocally` and compares the result with that label.
 
-- verdict: pass, revise, or block;
-- violated or unclear constraints;
-- smallest required correction;
-- time to decision.
+The baseline is intentionally weak and transparent: an **ungated review** treats submitted work as acceptable because no explicit constraint precedence exists. It is not an LLM or expert-review comparison.
 
-The assisted condition supplies the same material through DriftGuard and asks the reviewer to accept, edit, or reject the system verdict.
+```bash
+npm run evaluate:externalization
+```
 
-## Dataset
+Machine-readable inputs and results:
 
-Use 24–40 clearly labelled synthetic scenarios derived from common product and engineering review patterns. No scenario should contain private or production data.
+- `evaluation/cases.mjs`
+- `evaluation/results.json`
 
-Recommended categories:
+## Results
 
-1. Explicit blocking violation.
-2. Missing evidence.
-3. Threshold failure.
-4. Incomplete checklist.
-5. Semantic requirement met.
-6. Semantic requirement violated.
-7. Conflicting evidence.
-8. Irrelevant but persuasive content.
+| Metric | Result |
+|---|---:|
+| Scenarios | 24 |
+| DriftGuard verdict agreement | 24/24 |
+| Ungated-baseline agreement | 7/24 |
+| Critical false passes | 0 |
+| False blocks | 0 |
+| Unsupported passes prevented vs baseline | 17 |
 
-Each scenario must include:
+## Supported claim
 
-- accepted guardrail set;
-- candidate work or action;
-- submitted evidence;
-- expected deterministic findings;
-- expected final verdict where objectively decidable;
-- ambiguity note where expert judgment is required.
+The checked local rules engine reproduced the expected verdict in all 24 authored scenarios, including blocking-rule precedence and conservative treatment of missing semantic proof.
 
-## Sample size
+## Failure categories tested
 
-- Automated contract benchmark: all scenarios.
-- Initial usability benchmark: 3–5 participants, each completing 6–10 paired tasks.
-- Later validation: expand only after the initial failure taxonomy is stable.
-
-Synthetic scenarios do not count as real-user evidence. Participant results do not prove production impact.
-
-## Procedure
-
-1. Freeze the scenario set and answer key before participant testing.
-2. Randomize baseline-first versus assisted-first ordering.
-3. Capture start time, decision time, verdict, identified findings, correction, and confidence.
-4. In the assisted condition, capture whether the user accepted, edited, or rejected the output.
-5. Ask the participant to explain any disagreement.
-6. Classify each disagreement before changing the product or answer key.
-
-## Metrics
-
-### Primary
-
-- Blocking-violation recall.
-- Unsupported-pass rate.
-- False-block rate.
-- Missing-evidence detection rate.
-- Median review time.
-
-### Secondary
-
-- Agreement with the frozen answer key.
-- User correction rate.
-- Smallest-correction usefulness rating.
-- Confidence calibration.
-- Semantic-finding disagreement rate.
-
-## Result table
-
-Populate only after executing the benchmark.
-
-| Metric | Baseline | DriftGuard | Difference | Evidence type |
-| --- | ---: | ---: | ---: | --- |
-| Blocking-violation recall | Not run | Not run | Not available | Planned |
-| Unsupported-pass rate | Not run | Not run | Not available | Planned |
-| False-block rate | Not run | Not run | Not available | Planned |
-| Missing-evidence detection | Not run | Not run | Not available | Planned |
-| Median review time | Not run | Not run | Not available | Planned |
-| User correction rate | N/A | Not run | Not available | Planned |
-
-## Existing executable evidence
-
-The release tree already verifies:
-
-- a violated blocking rule forces `Block`;
-- missing or invalid evidence cannot produce `Pass`;
-- deterministic rule types do not depend on model judgment;
-- only complete `met` findings may produce `Pass`;
-- Edge Function naming, deployment contracts, TypeScript checks, linting, formatting, and production build remain consistent.
-
-See `RELEASE_REPORT.md`, `RELEASE_GATES.md`, and the judgment-contract test command referenced in `package.json`.
-
-## Failure categories
-
-Use these categories during analysis:
-
-- false pass;
-- false block;
-- unresolved evidence misclassified as met;
-- rule precedence error;
-- semantic interpretation error;
-- user-provided guardrail ambiguity;
-- answer-key defect;
-- unusable correction;
-- latency or workflow failure.
-
-## Representative failures
-
-None are reported yet because the external benchmark has not been executed. Do not fabricate examples as observed failures. During testing, preserve sanitized input, expected result, actual result, and reviewer explanation for every disagreement.
+- missing binary, metric, or checklist evidence;
+- objective threshold violation;
+- partial checklist completion;
+- blocking versus warning enforcement;
+- unsupported quantitative claims;
+- restricted-data markers;
+- semantic uncertainty;
+- inactive-rule exclusion;
+- mixed rules where one blocking violation must dominate.
 
 ## Limitations
 
-- Synthetic scenarios cannot establish real operational value.
-- A frozen answer key may still contain reviewer assumptions.
-- Review time can improve through interface familiarity rather than better judgment.
-- Model-dependent semantic findings may change if the pinned model changes.
-- Participants drawn from one domain may not generalize to another.
+- Fixtures are authored scenarios, not observed user tasks.
+- Expected labels were not independently adjudicated.
+- The baseline is an ungated proxy, not an LLM or expert reviewer.
+- Hosted Edge Functions and provider output quality are outside this benchmark.
+- The result does not establish adoption, ROI, latency, scale, production reliability, or improved real-world outcomes.
 
-## Conclusion
+## Next justified evaluation
 
-The repository has strong implementation and contract evidence but does not yet have defensible user-outcome evidence. The correct next claim is that DriftGuard has a reproducible evaluation protocol—not that the protocol has already demonstrated improvement.
-
-## Reproduction commands
-
-Current implementation validation:
-
-```bash
-npm ci
-npm run validate
-npm audit --omit=dev
-```
-
-After benchmark fixtures and an execution script are added, document the exact command here and commit the raw, anonymized result file alongside the interpreted report.
+Run the same cases through the authenticated server path, add an independently reviewed semantic corpus, and complete three observed operator sessions using recent non-sensitive work.

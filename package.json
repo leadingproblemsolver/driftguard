@@ -13,11 +13,12 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test scripts/judgment-contract.test.mjs",
+    "evaluate:externalization": "node --experimental-strip-types scripts/externalization-evaluation.mjs",
     "schema:sync": "node scripts/sync-schema.mjs",
     "check:release": "node scripts/release-check.mjs",
     "check:deno": "node scripts/deno-check.mjs",
     "check:edge": "npm run check:deno && node scripts/check-edge.mjs",
-    "validate": "npm run schema:sync && npm run check:release && npm test && npm run check:edge && npm run typecheck && npm run lint && npm run format:check && npm run build",
+    "validate": "npm run schema:sync && npm run check:release && npm test && npm run evaluate:externalization && npm run check:edge && npm run typecheck && npm run lint && npm run format:check && npm run build",
     "check:env:frontend": "node scripts/env-check.mjs frontend",
     "check:env:backend": "node scripts/env-check.mjs backend",
     "check:env": "node scripts/env-check.mjs all",
@@ -32,7 +33,7 @@
     "supabase:function:evaluate": "npx --yes supabase@2.109.0 functions deploy evaluate --no-verify-jwt",
     "supabase:function:infer": "npx --yes supabase@2.109.0 functions deploy infer-guardrails --no-verify-jwt",
     "supabase:functions:api": "npx --yes supabase@2.109.0 functions deploy evaluate infer-guardrails --no-verify-jwt --use-api",
-    "check:offline": "npm run schema:sync && npm run check:release && npm test",
+    "check:offline": "npm run schema:sync && npm run check:release && npm test && npm run evaluate:externalization",
     "smoke:live": "node scripts/smoke-live.mjs"
   },
   "dependencies": {

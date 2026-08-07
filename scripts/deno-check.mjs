@@ -7,7 +7,7 @@ const args = [
   "lint",
   "supabase/functions/evaluate/index.ts",
   "supabase/functions/infer-guardrails/index.ts",
-  "supabase/functions/_shared",
+  "supabase/functions/shared",
 ];
 const result = spawnSync(executable, args, { cwd: process.cwd(), stdio: "inherit", shell: false });
 if (result.error) throw result.error;

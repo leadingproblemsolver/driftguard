@@ -63,7 +63,7 @@ A release is deployable only when every gate below remains true. `npm run valida
 
 - Only the literal folders `evaluate` and `infer-guardrails` are deployable.
 - Function folders, browser invocations, `supabase/config.toml`, and deployment commands must match that manifest.
-- `_shared` remains non-deployable shared source.
+- `shared` remains non-deployable shared source.
 - VS Code enables Deno only inside `supabase/functions`; the frontend remains in the Vite TypeScript project.
 - Shared modules and every deployable function have explicit Deno/import-map configuration.
 - Pinned Deno lint/check, standalone Edge TypeScript checking, slug parity, and bundling must pass before deployment.

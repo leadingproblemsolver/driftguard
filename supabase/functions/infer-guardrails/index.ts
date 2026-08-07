@@ -1,6 +1,6 @@
-import { callJsonAI } from "../_shared/ai.ts";
-import { consumeAiQuota, requireUser } from "../_shared/auth.ts";
-import { corsHeadersFor } from "../_shared/cors.ts";
+import { callJsonAI } from "../shared/ai.ts";
+import { consumeAiQuota, requireUser } from "../shared/auth.ts";
+import { corsHeadersFor } from "../shared/cors.ts";
 import {
   errorResponse,
   HttpError,
@@ -8,7 +8,7 @@ import {
   readJson,
   requestId,
   requirePost,
-} from "../_shared/http.ts";
+} from "../shared/http.ts";
 
 type Guardrail = {
   title: string;

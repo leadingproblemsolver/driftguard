@@ -91,7 +91,7 @@ The canonical deployment slugs are literal folder names:
 | `inferGuardrails` | `infer-guardrails` | Disabled; handler verifies the bearer token |
 | `evaluate`        | `evaluate`         | Disabled; handler verifies the bearer token |
 
-`_shared` is intentionally underscore-prefixed and is never deployed as a function. The root Deno configuration resolves shared imports; each deployable function also has its own `deno.json`.
+`shared` is intentionally underscore-prefixed and is never deployed as a function. The root Deno configuration resolves shared imports; each deployable function also has its own `deno.json`.
 
 Validate Deno resolution, editor/runtime types, and slug consistency with:
 

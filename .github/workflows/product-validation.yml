@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
           cache: npm
@@ -24,15 +24,10 @@ jobs:
           node --version
           npm --version
           test "$(npm config get min-release-age)" = "7"
+      - name: Normalize portable lock registry
+        run: node ./scripts/normalize-lock-registry.mjs
       - name: Install locked dependencies
-        run: |
-          if npm ci --no-audit --no-fund; then
-            echo "npm ci completed"
-          else
-            echo "::warning::npm ci failed before project validation; retrying via npm install and enforcing zero lockfile drift"
-            npm install --no-audit --no-fund
-            git diff --exit-code -- package-lock.json
-          fi
+        run: npm ci --no-audit --no-fund
       - name: Run full repository validation
         run: npm run validate
       - name: Audit production dependencies

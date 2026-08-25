@@ -25,7 +25,7 @@ export function errorResponse(error: unknown, headers: Record<string, string>, i
   const code = known ? error.code : "internal_error";
   const message = known ? error.message : "The request could not be completed.";
 
-  if (!known || status >= 500) console.error(`[${id}]`, error);
+  if (!known || status >= 500) console.error("[%s]", id, error);
 
   return jsonResponse({ error: { code, message, requestId: id } }, status, headers);
 }

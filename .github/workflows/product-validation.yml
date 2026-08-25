@@ -18,11 +18,12 @@ jobs:
           node-version: "22"
           cache: npm
       - name: Pin repository-declared npm version
-        run: npm install --global npm@10.9.2
-      - name: Verify toolchain
+        run: npm install --global npm@11.19.0
+      - name: Verify toolchain and supply-chain policy
         run: |
           node --version
           npm --version
+          test "$(npm config get min-release-age)" = "7"
       - name: Install locked dependencies
         run: |
           if npm ci --no-audit --no-fund; then

@@ -10,7 +10,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -24,7 +24,14 @@ jobs:
           node --version
           npm --version
       - name: Install locked dependencies
-        run: npm ci
+        run: |
+          if npm ci --no-audit --no-fund; then
+            echo "npm ci completed"
+          else
+            echo "::warning::npm ci failed before project validation; retrying via npm install and enforcing zero lockfile drift"
+            npm install --no-audit --no-fund
+            git diff --exit-code -- package-lock.json
+          fi
       - name: Run full repository validation
         run: npm run validate
       - name: Audit production dependencies

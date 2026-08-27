@@ -1,0 +1,28 @@
+{
+  "repo": "leadingproblemsolver/driftguard",
+  "artifact_id": "driftguard-agent-session-settlement-preflight",
+  "artifact_url": "https://github.com/leadingproblemsolver/driftguard",
+  "system": "DriftGuard",
+  "wedge": "seven-gate pre-execution settlement preflight for long-running agent and CLI runtimes",
+  "target_roles": [
+    "Agent Runtime Maintainer",
+    "Platform Engineer",
+    "Developer Tools Engineer",
+    "Engineering Manager"
+  ],
+  "pain_signals": [
+    "false-idle or false-settlement states",
+    "lost continuation intent",
+    "stale callbacks mutating current state",
+    "checkpoint or compaction corruption",
+    "unbounded provider waits",
+    "session/provider identity drift"
+  ],
+  "proof_refs": [
+    "README.md — seven deterministic settlement gates and first distribution loop",
+    "RELEASE_GATES.md",
+    "npm run validate",
+    "npm audit --omit=dev"
+  ],
+  "desired_consequence": "one maintainer supplies a real settlement or continuation failure path, runs it through the preflight, and confirms, corrects, or rejects the blocking-gate model"
+}

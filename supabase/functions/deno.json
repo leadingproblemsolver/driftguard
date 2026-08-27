@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
     "strict": true,
-    "lib": [
-      "deno.window"
-    ]
+    "lib": ["deno.window"]
   },
   "nodeModulesDir": "none",
   "lint": {
     "rules": {
-      "tags": [
-        "recommended"
-      ]
+      "tags": ["recommended"]
     }
   },
   "fmt": {

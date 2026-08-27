@@ -5,6 +5,7 @@ import { build } from "esbuild";
 const root = process.cwd();
 const functionsRoot = resolve(root, "supabase/functions");
 const EXPECTED = ["evaluate", "infer-guardrails"];
+const SUPPORT_DIRECTORIES = new Set(["shared"]);
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 async function exists(path) {
@@ -18,7 +19,13 @@ async function exists(path) {
 
 const entries = await readdir(functionsRoot, { withFileTypes: true });
 const actual = entries
-  .filter((entry) => entry.isDirectory() && !entry.name.startsWith("_") && !entry.name.startsWith("."))
+  .filter(
+    (entry) =>
+      entry.isDirectory() &&
+      !entry.name.startsWith("_") &&
+      !entry.name.startsWith(".") &&
+      !SUPPORT_DIRECTORIES.has(entry.name),
+  )
   .map((entry) => entry.name)
   .sort();
 

@@ -1,0 +1,36 @@
+name: Refresh security lock once
+
+on:
+  push:
+    paths:
+      - '.github/workflows/refresh-security-lock-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: dist/clay-signalops-driftguard-settlement-preflight-manifest-2026-08-25
+          fetch-depth: 0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - name: Pin repository-declared npm version
+        run: npm install --global npm@11.19.0
+      - name: Refresh lockfile only
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          node ./scripts/normalize-lock-registry.mjs
+          node -e "const l=require('./package-lock.json'); const p=l.packages['node_modules/js-yaml']; if (!p || p.version !== '4.3.1') throw new Error('js-yaml lock not patched: '+(p&&p.version));"
+      - name: Commit patched lock and remove one-shot workflow
+        run: |
+          rm .github/workflows/refresh-security-lock-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package-lock.json .github/workflows/refresh-security-lock-once.yml
+          git commit -m 'security: refresh lock for js-yaml 4.3.1'
+          git push origin HEAD:dist/clay-signalops-driftguard-settlement-preflight-manifest-2026-08-25

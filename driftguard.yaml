@@ -4,7 +4,7 @@ repo:
   visibility: public
   classification: advanced
   status: active
-  canonical: false                # unresolved — see notes
+  canonical: false # unresolved — see notes
   canonical_ref: "Advant0-st4r/driftguard (newer push, 2026-07-09 vs 2026-07-06)"
   fork_of: null
 
@@ -20,9 +20,11 @@ signals:
 
 evidence:
   level: 1
-  verified: ["README describes a real, specific mechanism on both copies", "four-field default setup (purpose/workflow/target/observable proof) documented"]
+  verified:
+    ["README describes a real, specific mechanism on both copies", "four-field default setup (purpose/workflow/target/observable proof) documented"]
   unverified: ["which copy is current", "any real usage instance", "content of the 248-line divergence"]
-  missing: ["line-by-line diff between leadingproblemsolver and Advant0-st4r copies", "canonical designation", "one real usage run"]
+  missing:
+    ["line-by-line diff between leadingproblemsolver and Advant0-st4r copies", "canonical designation", "one real usage run"]
 
 links:
   live_demo: null
